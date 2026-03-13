@@ -69,16 +69,16 @@ This project demonstrates a **real-world backend architecture using Spring Boot*
 
 ## Project Architecture
 
-Client (Browser) --->
-
-Thymeleaf Templates (View) --->
-
-Spring Boot Controllers --->
-
-Service Layer (Business Logic) --->
-
-Repository Layer (JPA / Hibernate) --->
-
+Client (Browser) 
+|
+Thymeleaf Templates (View) 
+|
+Spring Boot Controllers 
+|
+Service Layer (Business Logic) 
+|
+Repository Layer (JPA / Hibernate) 
+|
 MySQL Database
 
 
