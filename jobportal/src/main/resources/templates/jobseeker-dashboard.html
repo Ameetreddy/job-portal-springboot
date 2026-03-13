@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Job Seeker Dashboard</title>
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/all.css}"/>
+</head>
+
+<body>
+
+<header class="navbar navbar-expand-lg navbar-dark">
+    <label class="mt-2 ms-5 font-weight-bold h5">
+        <a th:href="@{/dashboard/jobseeker}">Jobportal</a>
+        <span class="logo_com font-weight-bold h5" style="color:white">.com</span>
+    </label>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav m-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/jobseeker}">
+                    <i class="fas fa-search"></i> Search for Jobs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/applied-jobs}">
+                    <i class="fa-solid fa-eye"></i> View applied Jobs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/job-seeker-profile/}">
+                    <i class="fa-solid fa-pencil"></i> Edit Profile
+                </a>
+            </li>
+        </ul>
+
+        <img class="rounded-circle me-3" height="50px" width="50px"
+             th:if="${user != null && user.photoImagePath != null}" th:src="@{${user.photoImagePath}}"/>
+
+        <label th:if="${user != null && user.firstName != null && user.lastName != null}"
+               th:text="${user.firstName + ' ' + user.lastName}"
+               class="nav-item nav-link px-2 me-3"></label>
+
+        <label th:unless="${user != null && user.firstName != null && user.lastName != null}"
+               th:text="${username}"
+               class="nav-item nav-link px-2 me-3"></label>
+
+        <label class="nav-link me-3" th:text="${username}"></label>
+
+        <button class="myBtn-light me-5" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+</header>
+
+<section class="section">
+
+    <div class="sidenav px-5">
+        <label class="text-uppercase color-dull font-weight-bold">Filter Results</label>
+        <hr/>
+
+        <form id="myForm" th:action="@{/dashboard/jobseeker}" method="get">
+
+            <label>Employment Type</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="partTime" th:value="Part-Time" th:checked="${partTime}">
+                <label class="form-check-label">Part-Time</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="fullTime" th:value="Full-Time" th:checked="${fullTime}">
+                <label class="form-check-label">Full-Time</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="freelance" th:value="Freelance" th:checked="${freelance}">
+                <label class="form-check-label">Freelance</label>
+            </div>
+
+            <label class="mt-3">Remote</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="remoteOnly" th:value="Remote-Only" th:checked="${remoteOnly}">
+                <label class="form-check-label">Remote-Only</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="officeOnly" th:value="Office-Only" th:checked="${officeOnly}">
+                <label class="form-check-label">Office-Only</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="partialRemote" th:value="Partial-Remote" th:checked="${partialRemote}">
+                <label class="form-check-label">Partial-Remote</label>
+            </div>
+
+            <label class="mt-3">Date Posted</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="today" th:checked="${today}">
+                <label class="form-check-label">Today</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="days7" th:checked="${days7}">
+                <label class="form-check-label">Last 7 Days</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="days30" th:checked="${days30}">
+                <label class="form-check-label">Last 30 Days</label>
+            </div>
+
+            <input type="hidden" name="job" th:value="${job}">
+            <input type="hidden" name="location" th:value="${location}">
+        </form>
+    </div>
+
+    <article>
+
+        <div class="box">
+            <h1 class="primary-title">Candidate Dashboard</h1>
+            <div class="inner">
+                <input id="job" type="text" placeholder="Search for a job" th:value="${job}">
+                <input id="loc" type="text" placeholder="Job Location" th:value="${location}">
+                <button type="submit" form="myForm"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+
+        <div class="box mt-3">
+            <label class="large-label px-3 mb-3">Search Results</label>
+
+            <th:block th:each="jobPost : ${jobPost}">
+                <a th:href="@{/job-details-apply/{id}(id=${jobPost.jobPostId})}" style="text-decoration:none;color:black">
+                    <div class="job-row">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="job-title">
+                                    [[${jobPost.jobTitle}]]
+                                    <span th:if="${jobPost.isActive}">(Applied)</span>
+                                    <span th:if="${jobPost.isSaved}">(Saved)</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <label th:text="${jobPost.jobLocationId.city+', '+jobPost.jobLocationId.state}"></label>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <label th:text="${jobPost.jobCompanyId.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </th:block>
+
+            <!-- PAGINATION ADDED -->
+            <div style="margin-top:20px;text-align:center">
+
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/dashboard/jobseeker(page=${currentPage-1})}">
+                    Previous
+                </a>
+
+                <span th:text="${currentPage+1}"></span>
+                /
+                <span th:text="${totalPages}"></span>
+
+                <a th:if="${currentPage+1 < totalPages}"
+                   th:href="@{/dashboard/jobseeker(page=${currentPage+1})}">
+                    Next
+                </a>
+
+            </div>
+
+        </div>
+
+    </article>
+</section>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+<script>
+    $('#job').change(function () { $('input[name="job"]').val($(this).val()); });
+    $('#loc').change(function () { $('input[name="location"]').val($(this).val()); });
+</script>
+
+</body>
+</html>

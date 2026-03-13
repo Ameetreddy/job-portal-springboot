@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="ISO-8859-1"/>
+    <title>Profile Setup</title>
+
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/font-awesome.min.css}" />
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/styles.css}" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+
+    <style>
+        .skill-input { width: 100%; }
+        .skill-exp { width: 100%; }
+        .skill-years { width: 100%; }
+        .skill-row { margin-bottom: 10px; display: flex; align-items: center; }
+        .remove-skill { cursor: pointer; color: red; font-weight: bold; margin-left: 5px; }
+        .file-preview img { width: 100px; height: auto; border-radius: 4px; margin-top: 5px; }
+        .file-preview a { text-decoration: none; color: #007BFF; margin-top: 5px; display: block; }
+    </style>
+</head>
+
+<body>
+<div class="row" style="margin-right:0;">
+    <div class="col-5 coffee_mug_background">
+        <div class="logo_left mt-3 pt-4 ms-5 pl-5">
+            <h2 class="logo" style="color: white">
+                Jobportal <span class="logo_com">.com</span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="col-7">
+        <div class="myForm">
+            <form th:action="@{/job-seeker-profile/addNew}" th:object="${profile}" method="post" enctype="multipart/form-data">
+
+                <div class="d-flex justify-content-center pt-3">
+                    <h1 class="heading_font font-weight-bold">Candidate</h1>
+                </div>
+                <div class="text-center mb-4">
+                    <h2 class="heading_font">Set up your Profile</h2>
+                </div>
+
+                <!-- Name -->
+                <div class="row">
+                    <input type="text" th:field="*{userAccountId}" name="userAccountId" hidden/>
+                    <div class="col-md-6 pr-1">
+                        <input placeholder="First Name" th:field="*{firstName}" type="text" class="form-control" required/>
+                    </div>
+                    <div class="col-md-6 pl-1">
+                        <input placeholder="Last Name" th:field="*{lastName}" type="text" class="form-control"/>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="row mt-2">
+                    <div class="col-md-4 pr-1">
+                        <input placeholder="City" th:field="*{city}" type="text" class="form-control"/>
+                    </div>
+                    <div class="col-md-4 px-1">
+                        <input placeholder="State" th:field="*{state}" type="text" class="form-control"/>
+                    </div>
+                    <div class="col-md-4 pl-1">
+                        <input placeholder="Country" th:field="*{country}" type="text" class="form-control"/>
+                    </div>
+                </div>
+
+                <!-- Work Classification -->
+                <div class="row mt-3">
+                    <div class="form-group col-md-6 pr-1">
+                        <select required class="form-control" th:field="*{workAuthorization}">
+                            <option value="">Work Authorization</option>
+                            <option value="US Citizen" th:selected="${profile.workAuthorization=='US Citizen'}">US Citizen</option>
+                            <option value="Canadian Citizen" th:selected="${profile.workAuthorization=='Canadian Citizen'}">Canadian Citizen</option>
+                            <option value="Green Card" th:selected="${profile.workAuthorization=='Green Card'}">Green Card</option>
+                            <option value="H1 Visa" th:selected="${profile.workAuthorization=='H1 Visa'}">H1 Visa</option>
+                            <option value="TN Permit" th:selected="${profile.workAuthorization=='TN Permit'}">TN Permit</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6 pl-1">
+                        <select required class="form-control" th:field="*{employmentType}">
+                            <option value="">Seeking Employment</option>
+                            <option value="Full-Time" th:selected="${profile.employmentType=='Full-Time'}">Full-time</option>
+                            <option value="Part-Time" th:selected="${profile.employmentType=='Part-Time'}">Part-time</option>
+                            <option value="Freelance" th:selected="${profile.employmentType=='Freelance'}">Freelance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <label>Skills</label>
+                        <div id="skillsContainer" class="parent">
+                            <div th:each="skill, stat : *{skills}" class="skill-row">
+                                <input type="text" th:field="*{skills[__${stat.index}__].id}" hidden/>
+                                <input type="text" th:field="*{skills[__${stat.index}__].name}" placeholder="Skill Name" class="skill-input"/>
+                                <input type="number" min="0" th:field="*{skills[__${stat.index}__].yearsOfExperience}" placeholder="Years" class="skill-years"
+                                       th:disabled="${skill.name==null or #strings.isEmpty(skill.name)}"/>
+                                <select th:field="*{skills[__${stat.index}__].experienceLevel}" class="skill-exp"
+                                        th:disabled="${skill.name==null or #strings.isEmpty(skill.name)}">
+                                    <option value="">Select Level</option>
+                                    <option value="Beginner" th:selected="${skill.experienceLevel=='Beginner'}">Beginner</option>
+                                    <option value="Intermediate" th:selected="${skill.experienceLevel=='Intermediate'}">Intermediate</option>
+                                    <option value="Advance" th:selected="${skill.experienceLevel=='Advance'}">Advance</option>
+                                </select>
+                                <span class="remove-skill" title="Remove Skill">X</span>
+                            </div>
+                        </div>
+                        <button type="button" id="addSkill" class="btn btn-outline-secondary mt-2">Add Skill</button>
+                    </div>
+                </div>
+
+                <!-- Profile Photo & Resume -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label>Profile Photo</label>
+                        <input type="file" name="image" class="form-control" accept="image/png, image/jpeg"/>
+                        <input type="text" th:field="*{profilePhoto}" hidden/>
+                        <div class="file-preview" th:if="${profile.profilePhoto != null}">
+                            <img th:src="@{${profile.photoImagePath}}" alt="Profile Photo"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Resume</label>
+                        <input type="file" name="pdf" class="form-control" accept="application/pdf"/>
+                        <input type="text" th:field="*{resume}" hidden/>
+                        <div class="file-preview" th:if="${profile.resume != null}">
+                            <a th:href="@{/job-seeker-profile/downloadResume(fileName=${profile.resume},userID=${profile.userAccountId})}" target="_blank">Download Resume</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="row mt-3 justify-content-center">
+                    <button type="submit" class="btn btn-primary px-4 py-2">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+    $(document).ready(function() {
+
+        // Add skill row
+        var counter = $('#skillsContainer .skill-row').length - 1;
+        $('#addSkill').click(function() {
+            // Check for empty skill name
+            let hasEmpty = false;
+            $('#skillsContainer .skill-row .skill-input').each(function() {
+                if ($(this).val().trim() === '') hasEmpty = true;
+            });
+            if (hasEmpty) { alert('Fill empty skill first'); return; }
+
+            counter++;
+            let newRow = $(`
+                <div class="skill-row">
+                    <input type="text" name="skills[${counter}].id" hidden/>
+                    <input type="text" name="skills[${counter}].name" placeholder="Skill Name" class="skill-input"/>
+                    <input type="number" min="0" name="skills[${counter}].yearsOfExperience" placeholder="Years" class="skill-years" disabled/>
+                    <select name="skills[${counter}].experienceLevel" class="skill-exp" disabled>
+                        <option value="">Select Level</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advance">Advance</option>
+                    </select>
+                    <span class="remove-skill" title="Remove Skill">X</span>
+                </div>
+            `);
+            $('#skillsContainer').append(newRow);
+        });
+
+        // Enable/disable experience & years based on skill name
+        $(document).on('input', '.skill-input', function() {
+            let row = $(this).closest('.skill-row');
+            let val = $(this).val().trim();
+            row.find('.skill-exp, .skill-years').prop('disabled', val === '');
+        });
+
+        // Remove skill row
+        $(document).on('click', '.remove-skill', function() {
+            $(this).closest('.skill-row').remove();
+            // Reindex remaining rows
+            $('#skillsContainer .skill-row').each(function(i, row) {
+                $(row).find('.skill-input').attr('name', `skills[${i}].name`);
+                $(row).find('.skill-years').attr('name', `skills[${i}].yearsOfExperience`);
+                $(row).find('.skill-exp').attr('name', `skills[${i}].experienceLevel`);
+                $(row).find('input[type="hidden"]').attr('name', `skills[${i}].id`);
+            });
+        });
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Candidate Profile</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- Your custom styles (optional but recommended for consistency) -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+
+<body class="bg-light">
+
+
+<header class="navbar navbar-expand-lg navbar-dark" >
+    <label class="mt-2 ms-5 font-weight-bold h5">
+        <a th:href="@{/dashboard/recruiter}">Jobportal</a>
+        <span class="logo_com font-weight-bold h5" style="color:white">.com</span>
+    </label>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav m-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/add}">
+                    <i class="fa-solid fa-file-circle-plus"></i> Post New Job
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/recruiter}">
+                    <i class="fa-solid fa-eye"></i> View Your Jobs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/recruiter-profile/}">
+                    <i class="fa-solid fa-pencil"></i> Edit Account
+                </a>
+            </li>
+        </ul>
+		<img class="rounded-circle me-2"
+		     height="40" width="40"
+		     th:if="${user != null && user.photoImagePath != null}"
+		     th:src="@{${user.photoImagePath}}"/>
+
+			 <label class="nav-link me-3 text-light"
+			              th:text="${user != null && user.firstName != null ? user.firstName + ' ' + user.lastName : username}">
+			       </label>
+        <button class="myBtn-light me-5" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+</header>
+
+        <button class="btn btn-outline-light me-4"
+                onclick="window.location.href='/logout'">
+            Logout
+        </button>
+    </div>
+</header>
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Candidate Profile</h4>
+        </div>
+
+        <div class="card-body">
+
+            <p><strong>Name:</strong>
+                <span th:text="${profile.firstName + ' ' + profile.lastName}"></span>
+            </p>
+
+            <p><strong>Email:</strong>
+                <span th:text="${profile.userId.email}"></span>
+            </p>
+
+            <p><strong>Location:</strong>
+                <span th:text="${profile.city + ', ' + profile.country}"></span>
+            </p>
+
+            <p><strong>Employment Type:</strong>
+                <span th:text="${profile.employmentType}"></span>
+            </p>
+
+            <p><strong>Work Authorization:</strong>
+                <span th:text="${profile.workAuthorization}"></span>
+            </p>
+
+			<!-- Check if resume exists -->
+			<th:block th:if="${profile.resume != null}">
+			    <a th:href="@{/resume/{userId}/{fileName}(
+			                    userId=${profile.userAccountId},
+			                    fileName=${profile.resume})}"
+			       target="_blank"
+			       style="text-decoration: none; color: red;">
+			        <i class="fa-solid fa-file-pdf fa-lg"></i>
+			    </a>
+			</th:block>
+
+			<th:block th:unless="${profile.resume != null}">
+			    <span class="text-muted">No resume uploaded</span>
+			</th:block>
+
+            <a href="javascript:history.back()" class="btn btn-secondary ms-2">
+                Back
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

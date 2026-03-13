@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Jobportal</title>
+
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+
+<body class="background">
+
+    <!-- NAVBAR -->
+    <nav class="main_div">
+        <div class="logo_left">
+            <label class="logo" style="color:white;">Jobportal</label>
+            <label class="logo_com" style="color:#0d6efd;">.com</label>
+        </div>
+
+        <div class="logo_right">
+            <label class="Candidate_login_btn">
+                <a th:href="@{/login}" style="color:white;">Login</a>
+                <a th:href="@{/register}" style="color:white;"> / Register</a>
+            </label>
+        </div>
+    </nav>
+
+    <!-- CENTER CONTENT -->
+    <div class="container d-flex justify-content-center align-items-center"
+         style="min-height:80vh;">
+        <div class="text-center">
+
+            <h1 style="color:white; font-weight:700;">
+                Find Your <span style="color:#0d6efd;">Dream Job</span>
+            </h1>
+
+            <p style="color:#dcdcdc; font-size:18px; margin-top:15px;">
+                Thousands of opportunities. One place to build your future.
+            </p>
+
+            <p style="color:#bbbbbb; font-size:15px;">
+                Start your journey today — apply, connect, and grow 
+            </p>
+
+        </div>
+    </div>
+
+</body>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</html>

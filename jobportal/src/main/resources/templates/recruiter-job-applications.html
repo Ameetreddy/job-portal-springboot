@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Applied Candidates</title>
+	
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+
+<body class="bg-light">
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar navbar-expand-lg navbar-dark">
+    <label class="mt-2 ms-5 font-weight-bold h5">
+        <a th:href="@{/dashboard/recruiter}">jobportal</a>
+        <span class="logo_com font-weight-bold h5" style="color:white">.com</span>
+    </label>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav m-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/add}">
+                    <i class="fa-solid fa-file-circle-plus"></i> Post New Job
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/recruiter}">
+                    <i class="fa-solid fa-eye"></i> View Your Jobs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/recruiter-profile/}">
+                    <i class="fa-solid fa-pencil"></i> Edit Account
+                </a>
+            </li>
+        </ul>
+		<img class="rounded-circle me-2"
+		     height="40" width="40"
+		     th:if="${user != null && user.photoImagePath != null}"
+		     th:src="@{${user.photoImagePath}}"/>
+
+			 <label class="nav-link me-3 text-light"
+			              th:text="${user != null && user.firstName != null ? user.firstName + ' ' + user.lastName : username}">
+			       </label>
+        <button class="myBtn-light me-5" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+</header>
+        <button class="btn btn-outline-light me-4"
+                onclick="window.location.href='/logout'">
+            Logout
+        </button>
+    </div>
+</header>
+<!-- ================= END NAVBAR ================= -->
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Applied Candidates</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-secondary">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                   
+                    <th>Status</th>
+                    <th width="260">Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="apply : ${appliedList}">
+
+                    <td>
+                        <strong th:text="${apply.userId.firstName + ' ' + apply.userId.lastName}"></strong>
+                    </td>
+
+                    <td th:text="${apply.userId.userId.email}"></td>
+
+                    
+
+                    <td>
+                        <span class="badge bg-warning"
+                              th:if="${apply.status == 'Pending'}">Pending</span>
+                        <span class="badge bg-success"
+                              th:if="${apply.status == 'Selected'}">Selected</span>
+                        <span class="badge bg-danger"
+                              th:if="${apply.status == 'Rejected'}">Rejected</span>
+                    </td>
+
+                    <td class="d-flex gap-2">
+
+                        <a th:href="@{/recruiter/candidate/{id}(id=${apply.userId.userAccountId})}"
+                           class="btn btn-info btn-sm">
+                            View Profile
+                        </a>
+
+                        <form th:action="@{/dashboard/recruiter/application/{id}/status(id=${apply.id})}"
+                              method="post">
+
+                            <button type="submit" name="status" value="Selected"
+                                    class="btn btn-sm btn-success">
+                                Select
+                            </button>
+
+                            <button type="submit" name="status" value="Rejected"
+                                    class="btn btn-sm btn-danger">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+            <a href="/dashboard/recruiter" class="btn btn-secondary">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
